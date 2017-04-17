@@ -36,5 +36,8 @@ int main()
 		num = 0;
 	}
 	mylist.printAll();
+	mylist.sort();
+	cout << endl;
+	mylist.printAll();
 	return 0;
 }

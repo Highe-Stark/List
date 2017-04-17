@@ -32,6 +32,7 @@ public:
 	bool split(int pos, List& new_list);
 	void combine(List& append_list);
 	void printAll();
+	void sort();
 	~List() {
 		if (this->beg == nullptr) return;
 		Node* sec = beg->next;
@@ -115,6 +116,8 @@ List::List(int* array, int array_size)
 
 Node* List::end()
 {
+	//return the final node
+	//the final node->next is nullptr
 	Node* nod = this->beg;
 	for (int i = 1; i != this->size; ++i)nod = nod->next;
 	return nod;
@@ -216,4 +219,17 @@ void List::printAll()
 		nod = nod->next;
 	}
 	std::cout<< std::endl;
+}
+void List::sort()
+{
+	Node* start = this->beg;
+	for (Node* nod = start; nod != this->end(); nod = nod->next) {
+		for (Node* nn = nod->next; nn != nullptr; nn = nn->next) {
+			if (nod->value < nn->value) {
+				int tempi = nod->value;
+				nod->value = nn->value;
+				nn->value = tempi;
+			}
+		}
+	}
 }
