@@ -1,41 +1,42 @@
 #include <vector>
 #include <stdexcept>
+template <typename T>
 class Node
 {
 public:
-	int value;
-	Node* next;
-	Node(int v):value(v), next(nullptr){}
+	T value;
+	Node<T>* next;
+	Node<T>(T v):value(v), next(nullptr){}
 	~Node() {}
 };
 
-
+template <typename T>
 class List
 {
 private:
-	Node* beg;
+	Node<T>* beg;
 	int size;
 	//initialize the list with the beginning of another list
-	List(Node* n);
+	List(Node<T>* n);
 	// delete the node in the list
-	Node* del(Node* &nod);
+	Node<T>* del(Node<T>* &nod);
 public:
 	//default constructor
-	List():beg(nullptr), size(0) {}
-	List(const std::vector<int>& v);
-	List(int* array, int array_size);
-	Node* end();
+	List<T>():beg(nullptr), size(0) {}
+	List<T>(const std::vector<T>& v);
+	List<T>(int* array, int array_size);
+	Node<T>* end();
 	int length() const;
-	bool insert(int pos, int value);
-	int find(int value);
-	int remove(int value);
-	bool split(int pos, List& new_list);
-	void combine(List& append_list);
+	bool insert(int pos, T value);
+	int find(T value);
+	int remove(T value);
+	bool split(int pos, List<T>& new_list);
+	void combine(List<T>& append_list);
 	void printAll();
 	void sort();
-	~List() {
+	~List<T>() {
 		if (this->beg == nullptr) return;
-		Node* sec = beg->next;
+		Node<T>* sec = beg->next;
 		delete beg;
 		while (sec != nullptr) {
 			beg = sec;
@@ -54,24 +55,25 @@ public:
  	}
 };
 
-bool List::insert(int pos, int value)
+template <typename T>
+bool List<T>::insert(int pos, T value)
 {
 	//check whether the position is out of range
 	if (pos > this->size )return false;
 	if (pos == 0) {
-		this->beg = new Node(value);
+		this->beg = new Node<T>(value);
 		this->size = 1;
 		return true;
 	}
 	//locate from the first position
-	Node* pre = this->beg;
+	Node<T>* pre = this->beg;
 	for(int i=1;i!=pos;++i){
 		pre = pre->next;
 	}
 	//make a copy of original node
-	Node* orig = pre->next;
+	Node<T>* orig = pre->next;
 	//cover the original link
-	pre->next = new Node(value);
+	pre->next = new Node<T>(value);
 	//repair the link between the new one and previous one
 	pre->next->next = orig;
 	//size is bigger.
@@ -79,59 +81,65 @@ bool List::insert(int pos, int value)
 	return true;
 }
 
-List::List(Node* n)
+template <typename T>
+List<T>::List(Node<T>* n)
 {
 	this->size = 0;
 	//copy every node
-	Node* new_node = new Node(n->value);
+	Node<T>* new_node = new Node<T>(n->value);
 	this->beg = new_node;
 	this->size++;
-	Node* pre = this->beg;
+	Node<T>* pre = this->beg;
 	while (n->next != nullptr) {
-		pre->next = new Node(n->value);
+		pre->next = new Node<T>(n->value);
 		n = n->next;
 		this->size++;
 	}
 	//the end node
-	pre->next = new Node(n->value);
+	pre->next = new Node<T>(n->value);
 	this->size++;
 }
 
-List::List(const std::vector<int>& v)
+template <typename T>
+List<T>::List(const std::vector<T>& v)
 {
-	this->beg = new Node(v[0]);
+	this->beg = new Node<T>(v[0]);
 	this->size = 1;
 	for (; this->size != v.size();){
 		this->insert(this->size, v[this->size]);
 	}
 }
 
-List::List(int* array, int array_size)
+template <typename T>
+List<T>::List(int* array, int array_size)
 {
-	this->beg = new Node(array[0]);
+	this->beg = new Node<T>(array[0]);
 	for (this->size = 1; this->size != array_size;) {
 		this->insert(this->size, array[this->size]);
 	}
 }
 
-Node* List::end()
+template <typename T>
+Node<T>* List<T>::end()
 {
 	//return the final node
 	//the final node->next is nullptr
-	Node* nod = this->beg;
+	Node<T>* nod = this->beg;
 	for (int i = 1; i != this->size; ++i)nod = nod->next;
 	return nod;
 }
 
-int List::length() const
+template <typename T>
+int List<T>::length() const
 {
 	return this->size;
 }
-	
-int List::find(int value)
+
+template<typename T>
+int List<T>::find(T value)
 {
 	int pos(0);
-	Node* n = this->beg;
+	Node<T>* n = this->beg;
 	//from the beginning to search the node whose value is value
 	while (n != nullptr && n->value != value) {
 		n = n->next;
@@ -143,10 +151,11 @@ int List::find(int value)
 		return pos;
 }
 
-Node* List::del(Node* &nod)
+template <typename T>
+Node<T>* List<T>::del(Node<T>* &nod)
 {
 	//find the node
-	Node* n = this->beg;
+	Node<T>* n = this->beg;
 	while (n->next != nod) n = n->next;
 	//move the link to the previous node
 	n->next = nod->next;
@@ -158,11 +167,12 @@ Node* List::del(Node* &nod)
 	return n->next;
 }
 
-int List::remove(int value)
+template <typename T>
+int List<T>::remove(T value)
 {
 	int num(0);
 	int original_size = this->size;
-	Node* n = this->beg;
+	Node<T>* n = this->beg;
 	//find the node
 	//the node found is to be deleted
 	//not use find()
@@ -181,11 +191,12 @@ int List::remove(int value)
 	return num;
 }
 
-bool List::split(int pos, List& new_list)
+template <typename T>
+bool List<T>::split(int pos, List<T>& new_list)
 {
 	//check whether the position is out of range
 	if (pos >= this->length())return false;
-	Node* nod = this->beg;
+	Node<T>* nod = this->beg;
 	//find the position to divide
 	for (int i = 1; i != pos; i++) {
 		nod = nod->next;
@@ -200,19 +211,21 @@ bool List::split(int pos, List& new_list)
 	return true;
 }
 
-void List::combine(List& append_list)
+template <typename T>
+void List<T>::combine(List<T>& append_list)
 {
-	Node* nod = this->end();
+	Node<T>* nod = this->end();
 	//
 	nod->next = append_list.beg;
 	this->size += append_list.length();
 	//empty append_list
-	append_list = List();
+	append_list = List<T>();
 }
 
-void List::printAll()
+template <typename T>
+void List<T>::printAll()
 {
-	Node* nod = this->beg;
+	Node<T>* nod = this->beg;
 	for (int i = 0; i != this->size; i++) {
 		std::cout << nod->value << " ";
 		//try nod++->value
@@ -220,13 +233,15 @@ void List::printAll()
 	}
 	std::cout<< std::endl;
 }
-void List::sort()
+
+template <typename T>
+void List<T>::sort()
 {
-	Node* start = this->beg;
-	for (Node* nod = start; nod != this->end(); nod = nod->next) {
-		for (Node* nn = nod->next; nn != nullptr; nn = nn->next) {
+	Node<T>* start = this->beg;
+	for (Node<T>* nod = start; nod != this->end(); nod = nod->next) {
+		for (Node<T>* nn = nod->next; nn != nullptr; nn = nn->next) {
 			if (nod->value < nn->value) {
-				int tempi = nod->value;
+				T tempi = nod->value;
 				nod->value = nn->value;
 				nn->value = tempi;
 			}
